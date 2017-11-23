@@ -1,0 +1,42 @@
+
+    // this one work 
+    // send data to website and receive back
+    func senddata(username:String){
+        
+        let myUrl = URL(string: "http://192.168.64.2/Craftchase/test.php");
+        var request = URLRequest(url:myUrl! );
+        request.httpMethod = "POST";
+        
+        let postString = "username=\(username)";
+        
+        request.httpBody = postString.data(using: String.Encoding.utf8);
+        
+        let task = URLSession.shared.dataTask(with: request) { (data, _, _) in
+            DispatchQueue.main.async()
+            {
+                // get feedback from the website
+                do {
+                    let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as? NSDictionary
+                    if let parseJSON = json {
+                        // if status is 200
+                        let status = parseJSON["status"] as? String
+                        if(status! == "200")
+                        {
+                            // show the result of the data
+                            let status = parseJSON["status"]
+                            print(status)
+                        }else {
+                            
+                        }
+                        
+                    } // end of parseJSON
+                } catch
+                {
+                    print(error)
+                }
+            }// dispatch
+        }
+        task.resume()// nsurlsession
+        
+        
+    }// end of senddata
